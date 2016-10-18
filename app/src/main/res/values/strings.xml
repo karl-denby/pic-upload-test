@@ -1,3 +1,5 @@
-<resources>
+<resources xmlns:xliff="http://schemas.android.com/tools">
     <string name="app_name">pic-upload-test</string>
+    <string name="upload">Upload</string>
+    <string name="res_id_is">Resource ID is <xliff:g id="res_id" example="123456789">%d</xliff:g></string>
 </resources>
