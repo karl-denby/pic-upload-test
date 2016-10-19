@@ -21,8 +21,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        TextView txtResourceId = (TextView) findViewById(R.id.main_tv_resourceId);
-        txtResourceId.setText(getString(R.string.res_id_is, 12345));
+        TextView txtURI = (TextView) findViewById(R.id.main_tv_URI);
+        txtURI.setText(getString(R.string.uri_is, "/data/"));
 
         Button btnUpload = (Button) findViewById(R.id.main_btn_upload);
         btnUpload.setOnClickListener(new View.OnClickListener() {
@@ -45,10 +45,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_OPEN && resultCode == RESULT_OK) {
             Uri fullPhotoUri = data.getData();
+
+            TextView txtURI = (TextView) findViewById(R.id.main_tv_URI);
+            txtURI.setText(getString(R.string.uri_is, fullPhotoUri.getPath()));
+
             ImageView ivSelectedFile = (ImageView) findViewById(R.id.main_iv_SelectedFile);
             ivSelectedFile.setImageURI(fullPhotoUri);
         }
-
     }
-
 }

@@ -20,8 +20,8 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="Resource ID is: "
-        android:id="@+id/main_tv_resourceId"/>
+        tools:text="URI is: "
+        android:id="@+id/main_tv_URI"/>
 
     <ImageView
         android:id="@+id/main_iv_SelectedFile"
