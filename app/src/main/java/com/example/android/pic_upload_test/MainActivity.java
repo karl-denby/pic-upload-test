@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.w3c.dom.Text;
@@ -44,7 +45,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_OPEN && resultCode == RESULT_OK) {
             Uri fullPhotoUri = data.getData();
+            ImageView ivSelectedFile = (ImageView) findViewById(R.id.main_iv_SelectedFile);
+            ivSelectedFile.setImageURI(fullPhotoUri);
         }
+
     }
 
 }

@@ -24,6 +24,7 @@
         android:id="@+id/main_tv_resourceId"/>
 
     <ImageView
+        android:id="@+id/main_iv_SelectedFile"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:src="@mipmap/ic_launcher"/>
