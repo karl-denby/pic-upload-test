@@ -1,5 +1,5 @@
 <resources xmlns:xliff="http://schemas.android.com/tools">
     <string name="app_name">pic-upload-test</string>
-    <string name="upload">Upload</string>
+    <string name="select_image">Select Image</string>
     <string name="uri_is">URI is <xliff:g id="URI" example="/images/">%s</xliff:g></string>
 </resources>
