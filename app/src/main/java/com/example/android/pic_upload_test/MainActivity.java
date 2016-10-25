@@ -1,6 +1,8 @@
 package com.example.android.pic_upload_test;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -18,37 +20,69 @@ import java.io.ByteArrayOutputStream;
 
 public class MainActivity extends AppCompatActivity {
 
+    // Constants
     static final int REQUEST_IMAGE_OPEN = 1;
-    Bitmap bmp = null;
-    String encodedBmp = "";
+
+    // Variables to map to widgets on this activity
+    Bitmap bmp;
+    String encodedBmp;
+    ImageView ivSelectedFile;
+    TextView txtURI;
+    Button btnUpload;
+
+    // For Save/Load
+    Context context = MainActivity.this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ImageView ivSelectedFile = (ImageView) findViewById(R.id.main_iv_SelectedFile);
-        TextView txtURI = (TextView) findViewById(R.id.main_tv_URI);
-        txtURI.setText(getString(R.string.uri_is, "No image"));
+        ivSelectedFile = (ImageView) findViewById(R.id.main_iv_SelectedFile);
+        txtURI = (TextView) findViewById(R.id.main_tv_URI);
+        btnUpload = (Button) findViewById(R.id.main_btn_upload);
 
-        Button btnUpload = (Button) findViewById(R.id.main_btn_upload);
+        txtURI.setText(getString(R.string.uri_is, "No image"));
         btnUpload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 selectImage();
             }
         });
+    }
 
-        String loc = "content://media/external/images/media/247";  //pre-kitkat uri
-        try {
-            bmp = MediaStore.Images.Media.getBitmap(this.getContentResolver(), Uri.parse(loc));
-            encodedBmp = encodeToBase64(bmp, Bitmap.CompressFormat.JPEG, 100);
-        } catch (Exception e) {
-            Log.v("bmp Exception", "Can't make uri string into a bitmap: " + e.toString());
-        }
+    @Override
+    public void onPause() {
+        super.onPause();  // Always call the superclass method first
+
+        // clear out string and image
+        txtURI.setText("");
+        ivSelectedFile.setImageBitmap(null);
+
+        // save some data
+        // Save the dice values
+        SharedPreferences sharedPref = context.getSharedPreferences("BMP Test", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString("bmp", encodedBmp);
+        editor.apply();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();  // Always call the superclass method first
+
+        // Load saved values???
+        SharedPreferences sharedPref = context.getSharedPreferences("BMP Test", Context.MODE_PRIVATE);
+        encodedBmp = sharedPref.getString("bmp", encodedBmp);
+
         // set string and image
-        txtURI.setText(getString(R.string.uri_is, loc));
-        ivSelectedFile.setImageBitmap(decodeBase64(encodedBmp));
+        if (encodedBmp != null) {
+            ivSelectedFile.setImageBitmap(decodeBmpFromBase64(encodedBmp));
+            txtURI.setText("Using saved String");
+        } else {
+            txtURI.setText("Nothing stored");
+        }
+
     }
 
     public void selectImage() {
@@ -68,27 +102,33 @@ public class MainActivity extends AppCompatActivity {
 
             // set string on txtView
             TextView txtURI = (TextView) findViewById(R.id.main_tv_URI);
-            txtURI.setText(getString(R.string.uri_is, fullPhotoUri.toString()));  // use string for textbox
+            txtURI.setText(getString(R.string.uri_is, fullPhotoUri.toString()));
 
             // set image using string version parsed as a URI
             ImageView ivSelectedFile = (ImageView) findViewById(R.id.main_iv_SelectedFile);
             ivSelectedFile.setImageURI(fullPhotoUri); // convert string back to URI
+
+            // Now turn our Bitmap into a String
+            try {
+                bmp = MediaStore.Images.Media.getBitmap(this.getContentResolver(), fullPhotoUri);
+                encodedBmp = encodeBmpToBase64(bmp, Bitmap.CompressFormat.JPEG, 100);
+                Log.v("BMP encode: ", "Success");
+            } catch (Exception e) {
+                Log.v("BMP encode: ", "Error: " + e.toString());
+            }
+
         }
     }
 
-    public static String encodeToBase64(Bitmap image, Bitmap.CompressFormat compressFormat, int quality)
-    {
+    private static String encodeBmpToBase64(Bitmap image, Bitmap.CompressFormat compressFormat, int quality) {
         ByteArrayOutputStream byteArrayOS = new ByteArrayOutputStream();
         image.compress(compressFormat, quality, byteArrayOS);
         return Base64.encodeToString(byteArrayOS.toByteArray(), Base64.DEFAULT);
     }
 
-    public static Bitmap decodeBase64(String input)
-    {
+    private static Bitmap decodeBmpFromBase64(String input) {
         byte[] decodedBytes = Base64.decode(input, 0);
         return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
     }
 
-    // String myBase64Image = encodeToBase64(myBitmap, Bitmap.CompressFormat.JPEG, 100);
-    // Bitmap myBitmapAgain = decodeBase64(myBase64Image);
 }
