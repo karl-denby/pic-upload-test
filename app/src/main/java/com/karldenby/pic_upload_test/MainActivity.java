@@ -78,9 +78,9 @@ public class MainActivity extends AppCompatActivity {
         // set string and image
         if (encodedBmp != null) {
             ivSelectedFile.setImageBitmap(decodeBmpFromBase64(encodedBmp));
-            txtURI.setText("Using saved String");
+            txtURI.setText("Image encoded as String, decode displayed below");
         } else {
-            txtURI.setText("Nothing stored");
+            txtURI.setText("No image");
         }
 
     }
